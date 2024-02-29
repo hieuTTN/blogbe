@@ -1,5 +1,7 @@
 package com.web.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -18,6 +20,7 @@ public class BlogCategory {
 
     @ManyToOne
     @JoinColumn(name = "blog_id")
+    @JsonBackReference
     private Blog blog;
 
     @ManyToOne

@@ -6,6 +6,7 @@ import lombok.Setter;
 import javax.persistence.*;
 import java.sql.Date;
 import java.sql.Time;
+import java.util.Set;
 
 @Entity
 @Table(name = "blog")
@@ -37,4 +38,10 @@ public class Blog {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    private Set<BlogCategory> blogCategories;
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
+    private Set<BlogFile> blogFiles;
 }

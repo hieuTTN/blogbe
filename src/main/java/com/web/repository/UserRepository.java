@@ -30,4 +30,8 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("select u from User u where u.username like ?1 or u.fullName like ?1")
     public Set<User> searchByParam(String param);
+
+    @Query(value = "select u.* from chat c inner join users u\n" +
+            "where (c.sender = ?1 or c.receiver = ?1) and u.id != ?1 group by u.id", nativeQuery = true)
+    public List<User> listUserChated(Long userId);
 }
