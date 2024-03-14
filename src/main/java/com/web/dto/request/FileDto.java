@@ -5,9 +5,13 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class BlogFileDto {
+public class FileDto {
 
     private String linkFile;
 
     private String typeFile;
+
+    private String fileName;
+
+    private Long fileSize;
 }

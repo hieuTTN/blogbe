@@ -3,24 +3,22 @@ package com.web.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
-@Setter
 @Getter
-public class BlogRequest {
+@Setter
+public class DocumentRequest {
 
-    private Long id;
-
-    private String title;
-
-    private String description;
+    private String name;
 
     private String image;
 
-    private String content;
-
-    private List<FileDto> linkFiles = new ArrayList<>();
+    private String description;
 
     private List<Long> listCategoryId = new ArrayList<>();
+
+    private List<FileDto> linkFiles = new ArrayList<>();
 }

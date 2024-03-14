@@ -11,9 +11,6 @@ import org.springframework.stereotype.Component;
 public class ChatMapper {
 
     @Autowired
-    private UserUtils userUtils;
-
-    @Autowired
     private ModelMapper mapper;
 
     public Chat chatRequestToChat(ChatRequest request){

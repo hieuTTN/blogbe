@@ -1,6 +1,6 @@
 package com.web.service;
 
-import com.web.dto.request.BlogFileDto;
+import com.web.dto.request.FileDto;
 import com.web.dto.request.BlogRequest;
 import com.web.entity.*;
 import com.web.exception.MessageException;
@@ -72,7 +72,7 @@ public class BlogService {
             blogCategoryRepository.save(blogCategory);
         }
 
-        for (BlogFileDto blogFileDto : request.getLinkFiles()) {
+        for (FileDto blogFileDto : request.getLinkFiles()) {
             BlogFile blogFile = new BlogFile();
             blogFile.setBlog(result);
             blogFile.setLinkFile(blogFileDto.getLinkFile());
@@ -122,7 +122,7 @@ public class BlogService {
         }
 
         blogFileRepository.deleteByBlog(request.getId());
-        for (BlogFileDto blogFileDto : request.getLinkFiles()) {
+        for (FileDto blogFileDto : request.getLinkFiles()) {
             BlogFile blogFile = new BlogFile();
             blogFile.setBlog(result);
             blogFile.setLinkFile(blogFileDto.getLinkFile());
