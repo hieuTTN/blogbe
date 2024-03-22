@@ -36,6 +36,8 @@ public class Document {
 
     private String description;
 
+    private Boolean actived = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -3,6 +3,7 @@ package com.web.service;
 import com.web.dto.request.FileDto;
 import com.web.dto.request.BlogRequest;
 import com.web.entity.*;
+import com.web.enums.ActiveStatus;
 import com.web.exception.MessageException;
 import com.web.mapper.BlogMapper;
 import com.web.repository.BlogCategoryRepository;
@@ -56,13 +57,16 @@ public class BlogService {
             }
             categories.add(category.get());
         }
-
+        User user = userUtils.getUserWithAuthority();
         Blog blog = blogMapper.convertRequestToBlog(request);
         blog.setCreatedDate(new Date(System.currentTimeMillis()));
         blog.setCreatedTime(new Time(System.currentTimeMillis()));
-        blog.setUser(userUtils.getUserWithAuthority());
+        blog.setUser(user);
         blog.setNumLike(0);
         blog.setNumView(0);
+        if(user.getRole().equals(Contains.ROLE_ADMIN)){
+            blog.setActived(true);
+        }
         Blog result = blogRepository.save(blog);
 
         for (Category c : categories) {
@@ -106,6 +110,7 @@ public class BlogService {
         }
 
         Blog blog = blogMapper.convertRequestToBlog(request);
+        blog.setActived(blogExist.get().getActived());
         blog.setCreatedDate(blogExist.get().getCreatedDate());
         blog.setCreatedTime(blogExist.get().getCreatedTime());
         blog.setUser(userUtils.getUserWithAuthority());
@@ -150,5 +155,36 @@ public class BlogService {
         }
 
         blogRepository.delete(blogOptional.get());
+    }
+
+    public Page<Blog> getBlogActived(Pageable pageable){
+        Page<Blog> page = blogRepository.getBlogActived(pageable);
+        return page;
+    }
+
+    public Page<Blog> searchBlog(String search,Pageable pageable){
+        Page<Blog> page = blogRepository.searchBlog("%"+search+"%",pageable);
+        return page;
+    }
+
+    public Page<Blog> getBlogByCategory(Long categoryId, Pageable pageable){
+        Page<Blog> page = blogRepository.getBlogsByCategory(categoryId,pageable);
+        return page;
+    }
+
+    public ActiveStatus activeOrUnactive(Long idBlog){
+        Optional<Blog> blogOptional = blogRepository.findById(idBlog);
+        if (blogOptional.isEmpty()){
+            throw new MessageException("Blog không tồn tại");
+        }
+        if (blogOptional.get().getActived() == true){
+            blogOptional.get().setActived(false);
+            blogRepository.save(blogOptional.get());
+            return ActiveStatus.DA_KHOA;
+        } else {
+            blogOptional.get().setActived(true);
+            blogRepository.save(blogOptional.get());
+            return ActiveStatus.DA_MO_KHOA;
+        }
     }
 }

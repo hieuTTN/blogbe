@@ -35,6 +35,8 @@ public class Blog {
 
     private Integer numView;
 
+    private Boolean actived = false;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

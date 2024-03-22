@@ -2,6 +2,7 @@ package com.web.api;
 
 import com.web.dto.request.BlogRequest;
 import com.web.entity.Blog;
+import com.web.enums.ActiveStatus;
 import com.web.service.BlogService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -40,5 +41,29 @@ public class BlogApi {
     @DeleteMapping("/all/delete")
     public void delete(@RequestParam Long blogID){
         blogService.deleteBlog(blogID);
+    }
+
+    @GetMapping("/public/get-blog-actived")
+    public ResponseEntity<?> getBlogActived(@RequestBody Pageable pageable){
+        Page<Blog> page = blogService.getBlogActived(pageable);
+        return new ResponseEntity<>(page, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/public/search-blog")
+    public ResponseEntity<?> searchBlog(@RequestParam String search, Pageable pageable){
+        Page<Blog> page = blogService.searchBlog(search,pageable);
+        return new ResponseEntity<>(page, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/public/get-blog-by-category")
+    public ResponseEntity<?> getBlogByCategory(@RequestParam Long category, Pageable pageable){
+        Page<Blog> page = blogService.getBlogByCategory(category,pageable);
+        return new ResponseEntity<>(page, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/admin/active-or-unactive")
+    public ResponseEntity<?> activeOrUnactive(@RequestParam Long blogId){
+        ActiveStatus activeStatus = blogService.activeOrUnactive(blogId);
+        return new ResponseEntity<>(activeStatus, HttpStatus.CREATED);
     }
 }

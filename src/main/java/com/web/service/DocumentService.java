@@ -2,15 +2,13 @@ package com.web.service;
 
 import com.web.dto.request.DocumentRequest;
 import com.web.dto.request.FileDto;
-import com.web.entity.Category;
-import com.web.entity.Document;
-import com.web.entity.DocumentCategory;
-import com.web.entity.DocumentFile;
+import com.web.entity.*;
 import com.web.exception.MessageException;
 import com.web.repository.CategoryRepository;
 import com.web.repository.DocumentCategoryRepository;
 import com.web.repository.DocumentFileRepository;
 import com.web.repository.DocumentRepository;
+import com.web.utils.Contains;
 import com.web.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -54,16 +52,19 @@ public class DocumentService {
         if (request.getLinkFiles().isEmpty()){
             throw new MessageException("Không có file nào!");
         }
-
+        User user = userUtils.getUserWithAuthority();
         Document document = new Document();
         document.setCreatedDate(new Date(System.currentTimeMillis()));
         document.setCreatedTime(new Time(System.currentTimeMillis()));
-        document.setUser(userUtils.getUserWithAuthority());
+        document.setUser(user);
         document.setNumView(0);
         document.setImage(request.getImage());
         document.setDescription(request.getDescription());
         document.setNumDownload(0);
         document.setName(request.getName());
+        if(user.getRole().equals(Contains.ROLE_ADMIN)){
+            document.setActived(true);
+        }
         Document result = documentRepository.save(document);
 
         List<DocumentCategory> documentCategories = new ArrayList<>();
