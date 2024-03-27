@@ -72,4 +72,16 @@ public class UserApi {
         User result = userRepository.save(us);
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
+
+    @PostMapping("/admin/create-by-admin")
+    public ResponseEntity<?> createByAdmin(@RequestBody User user){
+        User us = userService.createByAdmin(user);
+        return new ResponseEntity<>(us, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/admin/update-by-admin")
+    public ResponseEntity<?> updateByAdmin(@RequestBody User user){
+        User us = userService.updateByAdmin(user);
+        return new ResponseEntity<>(us, HttpStatus.CREATED);
+    }
 }

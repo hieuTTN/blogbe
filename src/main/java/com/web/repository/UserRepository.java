@@ -18,6 +18,10 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query(value = "select u from User u where u.username = ?1")
     Optional<User> findByUsername(String username);
 
+    @Query(value = "select u from User u where u.username = ?1 and u.id <> ?2")
+    Optional<User> findByUsernameAndId(String username, Long iduser);
+
+
     @Query(value = "select u from User u where u.username = ?1 and u.password = ?2")
     Optional<User> findByUsernameAndPassword(String username, String password);
 

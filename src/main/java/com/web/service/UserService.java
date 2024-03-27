@@ -8,6 +8,7 @@ import com.web.enums.ActiveStatus;
 import com.web.exception.MessageException;
 import com.web.jwt.JwtTokenProvider;
 import com.web.repository.UserRepository;
+import com.web.utils.Contains;
 import com.web.utils.UserUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -93,5 +94,37 @@ public class UserService {
             userRepository.save(user.get());
             return ActiveStatus.DA_MO_KHOA;
         }
+    }
+
+    public User createByAdmin(User user){
+        user.setActived(true);
+        user.setCreatedDate(new Date(System.currentTimeMillis()));
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (userRepository.findByUsername(user.getUsername()).isPresent()){
+            throw new MessageException("Tên tài khoản đã tồn tại!");
+        }
+        if (!user.getRole().equals(Contains.ROLE_ADMIN) && !user.getRole().equals(Contains.ROLE_USER)
+        && !user.getRole().equals(Contains.ROLE_BLOG_MANAGER) && !user.getRole().equals(Contains.ROLE_DOCUMENT_MANAGER)) {
+            throw new MessageException("Tên quyền không tồn tại!");
+        }
+        userRepository.save(user);
+
+        return user;
+    }
+
+    public User updateByAdmin(User user){
+        Optional<User> userOptional = userRepository.findById(user.getId());
+        if (userOptional.isEmpty()){
+            throw new MessageException("Tài khoản không tồn tại");
+        }
+        if (userRepository.findByUsernameAndId(user.getUsername(), user.getId()).isPresent()) {
+            throw new MessageException("Tên tài khoản đã tồn tại");
+        }
+        if (!user.getRole().equals(Contains.ROLE_ADMIN) && !user.getRole().equals(Contains.ROLE_USER)
+                && !user.getRole().equals(Contains.ROLE_BLOG_MANAGER) && !user.getRole().equals(Contains.ROLE_DOCUMENT_MANAGER)) {
+            throw new MessageException("Tên quyền không tồn tại!");
+        }
+        user.setPassword(userOptional.get().getPassword());
+        return userRepository.save(user);
     }
 }

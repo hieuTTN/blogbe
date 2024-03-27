@@ -10,8 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 @RequestMapping("/api/comment")
 @CrossOrigin
@@ -35,11 +33,5 @@ public class CommentApi {
     @DeleteMapping("/all/delete")
     public void delete(@RequestParam Long id){
         commentService.delete(id);
-    }
-
-    @GetMapping("/public/find-by-comment-parent")
-    public ResponseEntity<?> findByParent(@RequestParam Long parentId){
-        List<Comment> comments = commentService.findByParent(parentId);
-        return new ResponseEntity<>(comments, HttpStatus.CREATED);
     }
 }

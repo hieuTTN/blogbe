@@ -3,6 +3,7 @@ package com.web.service;
 import com.web.dto.request.DocumentRequest;
 import com.web.dto.request.FileDto;
 import com.web.entity.*;
+import com.web.enums.ActiveStatus;
 import com.web.exception.MessageException;
 import com.web.repository.CategoryRepository;
 import com.web.repository.DocumentCategoryRepository;
@@ -52,11 +53,12 @@ public class DocumentService {
         if (request.getLinkFiles().isEmpty()){
             throw new MessageException("Không có file nào!");
         }
+
         User user = userUtils.getUserWithAuthority();
         Document document = new Document();
         document.setCreatedDate(new Date(System.currentTimeMillis()));
         document.setCreatedTime(new Time(System.currentTimeMillis()));
-        document.setUser(user);
+        document.setUser(userUtils.getUserWithAuthority());
         document.setNumView(0);
         document.setImage(request.getImage());
         document.setDescription(request.getDescription());
@@ -156,5 +158,36 @@ public class DocumentService {
             throw new MessageException("Document không tồn tại");
         }
         return document.get();
+    }
+
+    public Page<Document> getDocumentActived(Pageable pageable){
+        Page<Document> documentPage = documentRepository.getDocumentActived(pageable);
+        return documentPage;
+    }
+
+    public Page<Document> searchDocumentByName(String name, Pageable pageable){
+        Page<Document> documentPage = documentRepository.searchDocumentByName(name,pageable);
+        return documentPage;
+    }
+
+    public Page<Document> getDocumentByCategory(Long categoryId, Pageable pageable){
+        Page<Document> documentPage = documentRepository.getDocumentByCategory(categoryId,pageable);
+        return documentPage;
+    }
+
+    public ActiveStatus activeOrUnactive(Long documentId){
+        Optional<Document> document = documentRepository.findById(documentId);
+        if (document.isEmpty()){
+            throw new MessageException("document này không tồn tại!");
+        }
+        if (document.get().getActived() == true){
+            document.get().setActived(false);
+            documentRepository.save(document.get());
+            return ActiveStatus.DA_KHOA;
+        } else {
+            document.get().setActived(true);
+            documentRepository.save(document.get());
+            return ActiveStatus.DA_MO_KHOA;
+        }
     }
 }

@@ -57,11 +57,12 @@ public class BlogService {
             }
             categories.add(category.get());
         }
+
         User user = userUtils.getUserWithAuthority();
         Blog blog = blogMapper.convertRequestToBlog(request);
         blog.setCreatedDate(new Date(System.currentTimeMillis()));
         blog.setCreatedTime(new Time(System.currentTimeMillis()));
-        blog.setUser(user);
+        blog.setUser(userUtils.getUserWithAuthority());
         blog.setNumLike(0);
         blog.setNumView(0);
         if(user.getRole().equals(Contains.ROLE_ADMIN)){
@@ -110,7 +111,6 @@ public class BlogService {
         }
 
         Blog blog = blogMapper.convertRequestToBlog(request);
-        blog.setActived(blogExist.get().getActived());
         blog.setCreatedDate(blogExist.get().getCreatedDate());
         blog.setCreatedTime(blogExist.get().getCreatedTime());
         blog.setUser(userUtils.getUserWithAuthority());
@@ -162,28 +162,28 @@ public class BlogService {
         return page;
     }
 
-    public Page<Blog> searchBlog(String search,Pageable pageable){
-        Page<Blog> page = blogRepository.searchBlog("%"+search+"%",pageable);
+    public Page<Blog> searchBlog(String search, Pageable pageable){
+        Page<Blog> page = blogRepository.searchBlog(search,pageable);
         return page;
     }
 
     public Page<Blog> getBlogByCategory(Long categoryId, Pageable pageable){
-        Page<Blog> page = blogRepository.getBlogsByCategory(categoryId,pageable);
+        Page<Blog> page = blogRepository.getBlogByCategory(categoryId, pageable);
         return page;
     }
 
-    public ActiveStatus activeOrUnactive(Long idBlog){
-        Optional<Blog> blogOptional = blogRepository.findById(idBlog);
-        if (blogOptional.isEmpty()){
-            throw new MessageException("Blog không tồn tại");
+    public ActiveStatus activeOrUnactive(Long blogId){
+        Optional<Blog> blog = blogRepository.findById(blogId);
+        if (blog.isEmpty()){
+            throw new MessageException("Blog này không tồn tại!");
         }
-        if (blogOptional.get().getActived() == true){
-            blogOptional.get().setActived(false);
-            blogRepository.save(blogOptional.get());
+        if (blog.get().getActived() == true){
+            blog.get().setActived(false);
+            blogRepository.save(blog.get());
             return ActiveStatus.DA_KHOA;
         } else {
-            blogOptional.get().setActived(true);
-            blogRepository.save(blogOptional.get());
+            blog.get().setActived(true);
+            blogRepository.save(blog.get());
             return ActiveStatus.DA_MO_KHOA;
         }
     }
